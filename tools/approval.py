@@ -91,6 +91,11 @@ DANGEROUS_PATTERNS = [
     (r'\bkill\s+-9\s+-1\b', "kill all processes"),
     (r'\bpkill\s+-9\b', "force kill processes"),
     (r':\(\)\s*\{\s*:\s*\|\s*:\s*&\s*\}\s*;\s*:', "fork bomb"),
+    # Missing patterns (from internal audit)
+    (r'\bsudo\s+-S\b', "sudo reading password from stdin"),
+    (r'\balias\s+\w+=', "shell alias creation (can override builtins)"),
+    (r'\bdisown\b(?!\s+-a)', "detach background process from shell"),
+    (r'\bcrontab\s+-[eu]\b', "edit user crontab (persistence risk)"),
     # Any shell invocation via -c or combined flags like -lc, -ic, etc.
     (r'\b(bash|sh|zsh|ksh)\s+-[^\s]*c(\s+|$)', "shell command via -c/-lc flag"),
     (r'\b(python[23]?|perl|ruby|node)\s+-[ec]\s+', "script execution via -e/-c flag"),
