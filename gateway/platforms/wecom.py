@@ -1070,6 +1070,16 @@ class WeComAdapter(BasePlatformAdapter):
         if not local_path.is_absolute():
             local_path = (Path.cwd() / local_path).resolve()
 
+        # Restrict file:// access to HERMES_HOME media directory to prevent path traversal
+        from hermes_constants import get_hermes_home
+        allowed_dir = get_hermes_home() / "media"
+        try:
+            local_path_resolved = local_path.resolve()
+            if not local_path_resolved.is_relative_to(allowed_dir.resolve()):
+                raise PermissionError(f"file:// path outside allowed media directory: {local_path}")
+        except ValueError:
+            raise PermissionError(f"file:// path traversal rejected: {local_path}")
+
         if not local_path.exists() or not local_path.is_file():
             raise FileNotFoundError(f"Media file not found: {local_path}")
 
